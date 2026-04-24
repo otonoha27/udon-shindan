@@ -490,14 +490,17 @@ body{
   font-weight:700;
 }
 .share-modal .share-img-wrap{
-  width:100%;
-  aspect-ratio:1080/1350;
+  width:auto;
+  height:min(62vh, 560px);
+  aspect-ratio:1080/1920;
   background:#F2F2F7;
-  border-radius:12px;
+  border-radius:14px;
   overflow:hidden;
   display:flex;
   align-items:center;
   justify-content:center;
+  margin:0 auto;
+  max-width:100%;
 }
 .share-modal .share-img-wrap img{
   width:100%;
@@ -599,41 +602,64 @@ body{
 <body>
 <div class="app" id="app"></div>
 
-<!-- Hidden share card template (rendered to image for sharing) -->
+<!-- Hidden share card template (Instagram Stories format 1080x1920, rendered to image for sharing) -->
 <div id="shareCardRoot" aria-hidden="true" style="position:fixed;left:-99999px;top:0;pointer-events:none">
-  <div id="shareCard" style="width:1080px;height:1350px;background:linear-gradient(160deg,#FFE8D6 0%,#FFD4B1 45%,#FFBF90 100%);font-family:-apple-system,BlinkMacSystemFont,'Hiragino Sans','Hiragino Kaku Gothic ProN',sans-serif;padding:80px 70px;box-sizing:border-box;position:relative;color:#1C1C1E">
-    <!-- Header -->
-    <div style="text-align:center">
-      <div style="font-size:22px;color:#D84315;font-weight:800;letter-spacing:8px">SANUKI UDON SHINDAN</div>
-      <div style="font-size:42px;color:#1C1C1E;font-weight:900;letter-spacing:-1px;margin-top:6px">讃岐うどん診断</div>
+  <div id="shareCard" style="width:1080px;height:1920px;background:linear-gradient(165deg,#FFF0E0 0%,#FFD7B5 40%,#FFB584 100%);font-family:-apple-system,BlinkMacSystemFont,'Hiragino Sans','Hiragino Kaku Gothic ProN',sans-serif;box-sizing:border-box;position:relative;color:#1C1C1E;overflow:hidden">
+
+    <!-- Decorative background blobs -->
+    <div style="position:absolute;top:-160px;right:-160px;width:600px;height:600px;background:radial-gradient(circle,#FFAB40 0%,transparent 70%);opacity:.45"></div>
+    <div style="position:absolute;bottom:-200px;left:-200px;width:700px;height:700px;background:radial-gradient(circle,#FFD4B1 0%,transparent 70%);opacity:.6"></div>
+    <!-- Decorative wavy noodle lines -->
+    <svg style="position:absolute;top:60px;left:0;width:100%;height:40px;opacity:.25" viewBox="0 0 1080 40" preserveAspectRatio="none">
+      <path d="M0 20 Q 60 4, 120 20 T 240 20 T 360 20 T 480 20 T 600 20 T 720 20 T 840 20 T 960 20 T 1080 20" stroke="#D84315" stroke-width="3" fill="none"/>
+    </svg>
+    <svg style="position:absolute;bottom:40px;left:0;width:100%;height:40px;opacity:.2" viewBox="0 0 1080 40" preserveAspectRatio="none">
+      <path d="M0 20 Q 60 36, 120 20 T 240 20 T 360 20 T 480 20 T 600 20 T 720 20 T 840 20 T 960 20 T 1080 20" stroke="#D84315" stroke-width="3" fill="none"/>
+    </svg>
+
+    <!-- Top brand -->
+    <div style="position:absolute;top:130px;left:0;right:0;text-align:center">
+      <div style="display:inline-block;background:#fff;padding:22px 50px;border-radius:50px;box-shadow:0 8px 24px rgba(0,0,0,.08)">
+        <div style="font-size:36px;color:#FF6B35;font-weight:900;letter-spacing:4px;line-height:1">🍜 讃岐うどん診断</div>
+      </div>
     </div>
-    <!-- Illustration area -->
-    <div id="shareCardIcon" style="display:flex;justify-content:center;align-items:center;margin:20px 0 10px;height:340px"></div>
-    <!-- Result label -->
-    <div style="text-align:center;margin:10px 0 20px">
-      <div style="display:inline-block;background:linear-gradient(135deg,#FF6B35,#E85A2C);color:#fff;padding:14px 36px;border-radius:30px;font-size:22px;font-weight:800;letter-spacing:3px;box-shadow:0 10px 22px rgba(255,107,53,.35)">★ あなたの運命の一杯 ★</div>
+
+    <!-- Udon illustration with spotlight -->
+    <div style="position:absolute;top:260px;left:0;right:0;display:flex;justify-content:center;align-items:center">
+      <div style="width:640px;height:640px;background:radial-gradient(circle,rgba(255,255,255,.85) 35%,rgba(255,255,255,0) 72%);display:flex;align-items:center;justify-content:center">
+        <div id="shareCardIcon" style="filter:drop-shadow(0 20px 30px rgba(139,69,19,.25))"></div>
+      </div>
     </div>
-    <!-- Store card -->
-    <div style="background:rgba(255,255,255,.95);border-radius:28px;padding:40px 36px;margin:0 0 24px;box-shadow:0 16px 40px rgba(0,0,0,.08)">
-      <div id="shareCardArea" style="display:inline-block;font-size:18px;font-weight:700;color:#FF6B35;background:#FFF3ED;padding:6px 16px;border-radius:14px;margin-bottom:10px"></div>
-      <div id="shareCardStore" style="font-size:56px;font-weight:900;letter-spacing:-1.5px;line-height:1.15;margin:8px 0 20px;color:#1C1C1E"></div>
-      <div id="shareCardDesc" style="font-size:20px;color:#3A3A3C;line-height:1.55;margin-bottom:22px"></div>
-      <div style="display:flex;align-items:center;gap:16px;margin-bottom:16px">
-        <div style="font-size:18px;color:#8E8E93;font-weight:700">マッチ度</div>
-        <div style="flex:1;height:14px;background:#F2F2F7;border-radius:7px;overflow:hidden">
-          <div id="shareCardBar" style="height:100%;background:linear-gradient(90deg,#FF6B35,#FFAB40);border-radius:7px;width:0"></div>
+
+    <!-- Ribbon banner -->
+    <div style="position:absolute;top:870px;left:0;right:0;text-align:center">
+      <div style="display:inline-block;background:linear-gradient(135deg,#FF6B35 0%,#E85A2C 100%);color:#fff;padding:24px 72px;border-radius:60px;font-size:40px;font-weight:900;letter-spacing:6px;box-shadow:0 16px 36px rgba(255,107,53,.45)">
+        ★ 運命の一杯 ★
+      </div>
+    </div>
+
+    <!-- Store info card -->
+    <div style="position:absolute;top:1010px;left:60px;right:60px;background:rgba(255,255,255,.96);border-radius:48px;padding:64px 56px;box-shadow:0 24px 60px rgba(139,69,19,.18)">
+      <div id="shareCardArea" style="display:inline-block;font-size:32px;font-weight:800;color:#FF6B35;background:#FFF3ED;padding:14px 32px;border-radius:26px;margin-bottom:24px"></div>
+      <div id="shareCardStore" style="font-size:104px;font-weight:900;letter-spacing:-3px;line-height:1.06;margin:0 0 36px;color:#1C1C1E"></div>
+
+      <!-- Match bar -->
+      <div style="display:flex;align-items:center;gap:28px;margin-bottom:40px">
+        <div style="font-size:30px;color:#8E8E93;font-weight:800;letter-spacing:.5px">マッチ度</div>
+        <div style="flex:1;height:22px;background:#F2F2F7;border-radius:11px;overflow:hidden">
+          <div id="shareCardBar" style="height:100%;background:linear-gradient(90deg,#FF6B35,#FFAB40);border-radius:11px;width:0"></div>
         </div>
-        <div id="shareCardPct" style="font-size:28px;font-weight:900;color:#FF6B35;min-width:70px;text-align:right"></div>
+        <div id="shareCardPct" style="font-size:64px;font-weight:900;color:#FF6B35;min-width:160px;text-align:right;line-height:1"></div>
       </div>
-      <div id="shareCardTags" style="display:flex;flex-wrap:wrap;gap:8px;margin-top:8px"></div>
+
+      <!-- Tags -->
+      <div id="shareCardTags" style="display:flex;flex-wrap:wrap;gap:14px"></div>
     </div>
+
     <!-- Footer CTA -->
-    <div style="position:absolute;bottom:60px;left:70px;right:70px;display:flex;align-items:center;justify-content:space-between">
-      <div>
-        <div style="font-size:18px;color:#8D4A1F;font-weight:600">あなたも診断してみる</div>
-        <div id="shareCardUrl" style="font-size:22px;color:#D84315;font-weight:800;margin-top:4px"></div>
-      </div>
-      <div style="font-size:56px;line-height:1">🍜</div>
+    <div style="position:absolute;bottom:110px;left:60px;right:60px;text-align:center">
+      <div style="font-size:32px;color:#8D4A1F;font-weight:700;letter-spacing:1px;margin-bottom:10px">あなたも診断してみる</div>
+      <div id="shareCardUrl" style="font-size:40px;color:#D84315;font-weight:900;letter-spacing:.5px"></div>
     </div>
   </div>
 </div>
@@ -926,9 +952,8 @@ function progressHTML(){
 
 function renderStart(){
   return `
-    ${statusBarHTML()}
-    ${navBarHTML('讃岐うどん診断', false)}
     <div class="screen">
+      ${navBarHTML('讃岐うどん診断', false)}
       <div class="screen-content">
         <div class="hero">
           <div class="hero-wrap">
@@ -975,10 +1000,9 @@ function renderQuestion(){
   const btnLabel = isLast ? '結果を見る' : '次へ';
   const disabled = a ? '' : 'disabled';
   return `
-    ${statusBarHTML()}
-    ${navBarHTML('うどん診断', true)}
-    ${progressHTML()}
     <div class="screen">
+      ${navBarHTML('うどん診断', true)}
+      ${progressHTML()}
       <div class="screen-content">
         <div class="question-header">
           <div class="num">QUESTION ${state.step + 1} / ${questions.length}</div>
@@ -1073,9 +1097,8 @@ function renderResult(){
   }
 
   return `
-    ${statusBarHTML()}
-    ${navBarHTML('診断結果', true)}
     <div class="screen">
+      ${navBarHTML('診断結果', true)}
       <div class="screen-content">
         <div class="result-label">
           <div class="tag-top">あなたの運命の一杯</div>
@@ -1176,10 +1199,9 @@ function populateShareCard(){
   const r = state.topResult;
   if(!r) return;
   const s = r.store;
-  document.getElementById('shareCardIcon').innerHTML = udonIcon(s.menu, 320);
+  document.getElementById('shareCardIcon').innerHTML = udonIcon(s.menu, 560);
   document.getElementById('shareCardArea').textContent = '📍 ' + areaNames[s.area];
   document.getElementById('shareCardStore').textContent = s.name;
-  document.getElementById('shareCardDesc').textContent = s.desc;
   document.getElementById('shareCardPct').textContent = r.pct + '%';
   document.getElementById('shareCardBar').style.width = r.pct + '%';
   // URL (public URL if available, else fallback)
@@ -1200,7 +1222,7 @@ function populateShareCard(){
   for(const t of tagList){
     const el = document.createElement('div');
     const isMatch = matchSet.has(t.k);
-    el.style.cssText = 'padding:10px 18px;border-radius:14px;font-size:18px;font-weight:700;' +
+    el.style.cssText = 'padding:16px 26px;border-radius:22px;font-size:28px;font-weight:800;' +
       (isMatch ? 'background:#E8F5E9;color:#2E7D32' : 'background:#F2F2F7;color:#3A3A3C');
     el.textContent = (isMatch ? '✓ ' : '') + t.label;
     tagsEl.appendChild(el);
@@ -1218,7 +1240,7 @@ async function generateShareImage(){
   }
   return await domtoimage.toPng(node, {
     width: 1080,
-    height: 1350,
+    height: 1920,
     cacheBust: true,
     quality: 0.95
   });
@@ -1238,11 +1260,11 @@ async function openShareModal(){
       <div class="share-modal-bg"></div>
       <div class="share-modal-content">
         <button class="share-close" onclick="closeShareModal()">×</button>
-        <h3>🎴 シェアカード</h3>
+        <h3>🎴 ストーリー用カード</h3>
         <div class="share-img-wrap">
           <div class="share-loading">カードを生成中…</div>
         </div>
-        <div class="share-hint" style="margin-top:6px">画像が生成されるまで数秒かかります</div>
+        <div class="share-hint" style="margin-top:6px">Instagram Stories サイズ（1080×1920）で生成中…</div>
         <div class="share-buttons" style="visibility:hidden">
           <button class="btn ghost" id="dlBtn">📥 画像保存</button>
           <button class="btn" id="shareBtn">📱 シェア</button>
@@ -1257,7 +1279,7 @@ async function openShareModal(){
     imgWrap.innerHTML = `<img src="${dataUrl}" alt="診断結果カード" />`;
     const btns = host.querySelector('.share-buttons');
     btns.style.visibility = 'visible';
-    host.querySelector('.share-hint').textContent = '画像を長押しで保存もできます。SNSでシェアして友達もうどん旅に誘っちゃおう🍜';
+    host.querySelector('.share-hint').innerHTML = '1080×1920のストーリーサイズで保存されます📲<br>プレビューを長押しでも保存できます';
     host.querySelector('#dlBtn').onclick = downloadShareImage;
     host.querySelector('#shareBtn').onclick = nativeShareImage;
   }catch(e){
