@@ -13,6 +13,7 @@
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='48' fill='%23FFF3ED'/><ellipse cx='50' cy='58' rx='38' ry='8' fill='%235D3015'/><path d='M15 58 Q17 88 50 92 Q83 88 85 58 Z' fill='%238B5A2B'/><ellipse cx='50' cy='58' rx='36' ry='7' fill='%23D4A373'/><ellipse cx='50' cy='56' rx='33' ry='5' fill='%23FFF5DC'/><circle cx='42' cy='74' r='2.5' fill='%232C1810'/><circle cx='58' cy='74' r='2.5' fill='%232C1810'/><path d='M45 80 Q50 84 55 80' stroke='%232C1810' stroke-width='2' fill='none' stroke-linecap='round'/><ellipse cx='35' cy='79' rx='3' ry='2' fill='%23FF8A9B' opacity='0.6'/><ellipse cx='65' cy='79' rx='3' ry='2' fill='%23FF8A9B' opacity='0.6'/></svg>">
 <link rel="apple-touch-icon" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%23FFF3ED'/><ellipse cx='50' cy='58' rx='38' ry='8' fill='%235D3015'/><path d='M15 58 Q17 88 50 92 Q83 88 85 58 Z' fill='%238B5A2B'/><ellipse cx='50' cy='58' rx='36' ry='7' fill='%23D4A373'/><ellipse cx='50' cy='56' rx='33' ry='5' fill='%23FFF5DC'/><circle cx='42' cy='74' r='2.5' fill='%232C1810'/><circle cx='58' cy='74' r='2.5' fill='%232C1810'/><path d='M45 80 Q50 84 55 80' stroke='%232C1810' stroke-width='2' fill='none' stroke-linecap='round'/></svg>">
 <title>讃岐うどん診断 - 香川で出会う運命の一杯</title>
+<script src="https://cdn.jsdelivr.net/npm/dom-to-image-more@3.3.0/dist/dom-to-image-more.min.js"></script>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;-webkit-touch-callout:none}
 button,.option,.btn{-webkit-user-select:none;user-select:none}
@@ -36,37 +37,26 @@ body{
   background:linear-gradient(180deg,#FFF5EC 0%,#F8F3EE 60%,#F2EADF 100%);
   box-shadow:0 0 60px rgba(0,0,0,.08);
 }
-.statusbar{
-  height:calc(env(safe-area-inset-top,20px) + 20px);
-  display:flex;
-  align-items:flex-end;
-  justify-content:space-between;
-  padding:0 24px 4px;
-  font-size:15px;
-  font-weight:600;
-  color:#1C1C1E;
-}
-.statusbar .icons{display:flex;gap:5px;align-items:center;font-size:14px}
 .navbar{
-  height:44px;
+  height:calc(44px + env(safe-area-inset-top, 0px));
+  padding:env(safe-area-inset-top, 0px) 16px 0;
   display:flex;
   align-items:center;
   justify-content:center;
   position:relative;
-  padding:0 16px;
 }
 .navbar .back{
   position:absolute;
-  left:12px;
-  top:50%;
-  transform:translateY(-50%);
+  left:8px;
+  bottom:0;
+  height:44px;
   color:#FF6B35;
   font-size:17px;
   font-weight:400;
   background:none;
   border:none;
   cursor:pointer;
-  padding:8px 10px;
+  padding:0 10px;
   display:flex;
   align-items:center;
   gap:2px;
@@ -416,6 +406,142 @@ body{
   transition:background .2s,transform .15s;
 }
 .map-link:active{background:#E5E5EA;transform:scale(.98)}
+.map-embed{
+  margin:14px 0;
+  border-radius:14px;
+  overflow:hidden;
+  height:200px;
+  box-shadow:0 2px 10px rgba(0,0,0,.06);
+  background:#f0f0f0;
+  position:relative;
+}
+.map-embed iframe{
+  width:100%;
+  height:100%;
+  border:0;
+  display:block;
+}
+.map-embed .map-overlay{
+  position:absolute;
+  top:8px;right:8px;
+  background:rgba(255,255,255,.95);
+  color:#1C1C1E;
+  padding:4px 10px;
+  border-radius:12px;
+  font-size:11px;
+  font-weight:700;
+  pointer-events:none;
+  box-shadow:0 2px 6px rgba(0,0,0,.1);
+}
+.photo-link{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:6px;
+  background:#FFF3ED;
+  color:#D84315;
+  padding:11px;
+  border-radius:12px;
+  text-decoration:none;
+  font-weight:700;
+  font-size:14px;
+  margin-top:8px;
+  transition:background .2s,transform .15s;
+}
+.photo-link:active{background:#FFE0CC;transform:scale(.98)}
+
+/* Share modal & share card */
+.share-modal{
+  position:fixed;
+  inset:0;
+  z-index:1000;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:20px;
+  animation:fadeIn .25s ease;
+}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+.share-modal-bg{
+  position:absolute;
+  inset:0;
+  background:rgba(0,0,0,.55);
+  backdrop-filter:blur(10px);
+  -webkit-backdrop-filter:blur(10px);
+}
+.share-modal-content{
+  position:relative;
+  background:#fff;
+  border-radius:22px;
+  padding:16px;
+  max-width:360px;
+  width:100%;
+  max-height:90vh;
+  overflow-y:auto;
+  z-index:1;
+  box-shadow:0 20px 40px rgba(0,0,0,.25);
+  animation:slideUp .3s cubic-bezier(.32,.72,0,1);
+}
+@keyframes slideUp{from{transform:translateY(20px);opacity:0}to{transform:translateY(0);opacity:1}}
+.share-modal-content h3{
+  text-align:center;
+  margin:4px 0 12px;
+  font-size:17px;
+  font-weight:700;
+}
+.share-modal .share-img-wrap{
+  width:100%;
+  aspect-ratio:1080/1350;
+  background:#F2F2F7;
+  border-radius:12px;
+  overflow:hidden;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+.share-modal .share-img-wrap img{
+  width:100%;
+  height:100%;
+  object-fit:contain;
+  display:block;
+}
+.share-modal .share-loading{
+  font-size:13px;
+  color:#8E8E93;
+  padding:40px 20px;
+  text-align:center;
+}
+.share-modal .share-buttons{
+  display:flex;
+  gap:8px;
+  margin-top:14px;
+}
+.share-modal .share-buttons .btn{
+  flex:1;
+  padding:14px 14px;
+  font-size:14px;
+  box-shadow:0 4px 12px rgba(255,107,53,.25);
+}
+.share-modal .share-close{
+  position:absolute;
+  top:10px;right:10px;
+  background:#F2F2F7;
+  border:none;
+  width:30px;height:30px;
+  border-radius:15px;
+  font-size:18px;
+  cursor:pointer;
+  z-index:2;
+  color:#3A3A3C;
+  line-height:1;
+}
+.share-modal .share-hint{
+  font-size:11px;
+  color:#8E8E93;
+  text-align:center;
+  margin-top:10px;
+  line-height:1.5;
+}
 
 .alt-section{margin-top:24px}
 .alt-section h4{
@@ -472,6 +598,48 @@ body{
 </head>
 <body>
 <div class="app" id="app"></div>
+
+<!-- Hidden share card template (rendered to image for sharing) -->
+<div id="shareCardRoot" aria-hidden="true" style="position:fixed;left:-99999px;top:0;pointer-events:none">
+  <div id="shareCard" style="width:1080px;height:1350px;background:linear-gradient(160deg,#FFE8D6 0%,#FFD4B1 45%,#FFBF90 100%);font-family:-apple-system,BlinkMacSystemFont,'Hiragino Sans','Hiragino Kaku Gothic ProN',sans-serif;padding:80px 70px;box-sizing:border-box;position:relative;color:#1C1C1E">
+    <!-- Header -->
+    <div style="text-align:center">
+      <div style="font-size:22px;color:#D84315;font-weight:800;letter-spacing:8px">SANUKI UDON SHINDAN</div>
+      <div style="font-size:42px;color:#1C1C1E;font-weight:900;letter-spacing:-1px;margin-top:6px">讃岐うどん診断</div>
+    </div>
+    <!-- Illustration area -->
+    <div id="shareCardIcon" style="display:flex;justify-content:center;align-items:center;margin:20px 0 10px;height:340px"></div>
+    <!-- Result label -->
+    <div style="text-align:center;margin:10px 0 20px">
+      <div style="display:inline-block;background:linear-gradient(135deg,#FF6B35,#E85A2C);color:#fff;padding:14px 36px;border-radius:30px;font-size:22px;font-weight:800;letter-spacing:3px;box-shadow:0 10px 22px rgba(255,107,53,.35)">★ あなたの運命の一杯 ★</div>
+    </div>
+    <!-- Store card -->
+    <div style="background:rgba(255,255,255,.95);border-radius:28px;padding:40px 36px;margin:0 0 24px;box-shadow:0 16px 40px rgba(0,0,0,.08)">
+      <div id="shareCardArea" style="display:inline-block;font-size:18px;font-weight:700;color:#FF6B35;background:#FFF3ED;padding:6px 16px;border-radius:14px;margin-bottom:10px"></div>
+      <div id="shareCardStore" style="font-size:56px;font-weight:900;letter-spacing:-1.5px;line-height:1.15;margin:8px 0 20px;color:#1C1C1E"></div>
+      <div id="shareCardDesc" style="font-size:20px;color:#3A3A3C;line-height:1.55;margin-bottom:22px"></div>
+      <div style="display:flex;align-items:center;gap:16px;margin-bottom:16px">
+        <div style="font-size:18px;color:#8E8E93;font-weight:700">マッチ度</div>
+        <div style="flex:1;height:14px;background:#F2F2F7;border-radius:7px;overflow:hidden">
+          <div id="shareCardBar" style="height:100%;background:linear-gradient(90deg,#FF6B35,#FFAB40);border-radius:7px;width:0"></div>
+        </div>
+        <div id="shareCardPct" style="font-size:28px;font-weight:900;color:#FF6B35;min-width:70px;text-align:right"></div>
+      </div>
+      <div id="shareCardTags" style="display:flex;flex-wrap:wrap;gap:8px;margin-top:8px"></div>
+    </div>
+    <!-- Footer CTA -->
+    <div style="position:absolute;bottom:60px;left:70px;right:70px;display:flex;align-items:center;justify-content:space-between">
+      <div>
+        <div style="font-size:18px;color:#8D4A1F;font-weight:600">あなたも診断してみる</div>
+        <div id="shareCardUrl" style="font-size:22px;color:#D84315;font-weight:800;margin-top:4px"></div>
+      </div>
+      <div style="font-size:56px;line-height:1">🍜</div>
+    </div>
+  </div>
+</div>
+
+<!-- Share preview modal (dynamically inserted) -->
+<div id="shareModalHost"></div>
 
 <script>
 const stores = [
@@ -593,50 +761,65 @@ function getTopping(v){
 function udonIcon(variant, size){
   size = size || 120;
   const topping = getTopping(variant);
+  // Traditional donburi shape: wide rim, gentle belly, flat base with foot ring
   return `<svg viewBox="0 0 120 120" width="${size}" height="${size}" xmlns="http://www.w3.org/2000/svg" style="display:block;margin:0 auto;overflow:visible">
     <defs>
       <linearGradient id="bowlG-${variant}" x1="0" y1="0" x2="0" y2="1">
-        <stop offset="0" stop-color="#A0694A"/>
-        <stop offset="1" stop-color="#5D3015"/>
+        <stop offset="0" stop-color="#FAFAFA"/>
+        <stop offset="0.45" stop-color="#F2EDE4"/>
+        <stop offset="1" stop-color="#D4C6B3"/>
+      </linearGradient>
+      <linearGradient id="bandG-${variant}" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="#1E40AF"/>
+        <stop offset="1" stop-color="#1E3A8A"/>
       </linearGradient>
     </defs>
     <!-- steam -->
-    <g opacity="0.5" fill="none" stroke="#B8B8B8" stroke-width="1.8" stroke-linecap="round">
-      <path d="M42 26 Q37 20 42 14 Q47 8 42 2"/>
-      <path d="M60 29 Q55 22 60 14 Q65 7 60 0"/>
-      <path d="M78 26 Q73 20 78 14 Q83 8 78 2"/>
+    <g opacity="0.55" fill="none" stroke="#BCBCBC" stroke-width="1.8" stroke-linecap="round">
+      <path d="M42 24 Q37 18 42 12 Q47 6 42 0"/>
+      <path d="M60 27 Q55 20 60 12 Q65 5 60 -2"/>
+      <path d="M78 24 Q73 18 78 12 Q83 6 78 0"/>
     </g>
-    <!-- shadow -->
-    <ellipse cx="60" cy="114" rx="42" ry="3" fill="#000" opacity="0.1"/>
-    <!-- bowl body -->
-    <path d="M18 58 Q20 104 60 109 Q100 104 102 58 Z" fill="url(#bowlG-${variant})"/>
-    <!-- bowl wave pattern -->
-    <path d="M28 82 Q33 79 38 82 T48 82 T58 82 T68 82 T78 82 T88 82 T92 82" stroke="#4E2A0F" stroke-width="1.2" fill="none" opacity="0.5"/>
-    <path d="M30 88 Q34 86 38 88 T46 88 T54 88 T62 88 T70 88 T78 88 T86 88" stroke="#4E2A0F" stroke-width="0.8" fill="none" opacity="0.3"/>
-    <!-- bowl rim -->
-    <ellipse cx="60" cy="58" rx="41" ry="8" fill="#5D3015"/>
-    <ellipse cx="60" cy="57" rx="39" ry="6.5" fill="#D4A373"/>
-    <!-- broth -->
-    <ellipse cx="60" cy="55.5" rx="37" ry="5.5" fill="#EAD2A0"/>
-    <!-- noodle mound base -->
-    <ellipse cx="60" cy="54" rx="35" ry="5.5" fill="#FFF5DC"/>
-    <!-- noodle strands (visible wavy surface) -->
-    <g stroke="#FFE8A8" stroke-width="0.8" fill="none" stroke-linecap="round" opacity="0.7">
-      <path d="M28 53 Q38 51 48 53 Q58 55 68 53 Q78 51 88 53"/>
-      <path d="M30 56 Q40 54 50 56 Q60 58 70 56 Q80 54 90 56"/>
-      <path d="M34 51 Q44 49 54 51 Q64 53 74 51 Q84 49 88 50"/>
+    <!-- shadow under bowl -->
+    <ellipse cx="60" cy="114" rx="30" ry="2.5" fill="#000" opacity="0.12"/>
+    <!-- foot ring (base) -->
+    <rect x="42" y="104" width="36" height="6" rx="1.5" fill="#BFA888"/>
+    <rect x="42" y="104" width="36" height="3" rx="1" fill="#8D7559"/>
+    <!-- bowl main body: wide opening, gentle belly, flat base -->
+    <path d="M 12 58 C 8 82, 22 104, 44 104 L 76 104 C 98 104, 112 82, 108 58 Z" fill="url(#bowlG-${variant})"/>
+    <!-- outer rim darker edge -->
+    <path d="M 12 58 C 8 82, 22 104, 44 104 L 76 104 C 98 104, 112 82, 108 58" stroke="#8D7559" stroke-width="0.6" fill="none" opacity="0.6"/>
+    <!-- decorative blue band around bowl (seigaiha-inspired) -->
+    <path d="M 13 80 C 12 90, 26 100, 44 100 L 76 100 C 94 100, 108 90, 107 80 L 107 86 C 108 93, 94 102, 76 102 L 44 102 C 26 102, 12 93, 13 86 Z" fill="url(#bandG-${variant})" opacity="0.9"/>
+    <!-- wave motif on band -->
+    <g opacity="0.45" stroke="#fff" stroke-width="0.9" fill="none" stroke-linecap="round">
+      <path d="M 20 89 Q 26 86 32 89 T 44 89 T 56 89 T 68 89 T 80 89 T 92 89 T 100 89"/>
     </g>
-    <!-- topping -->
+    <!-- bowl rim (top ellipse) -->
+    <ellipse cx="60" cy="58" rx="48" ry="9" fill="#A89378"/>
+    <ellipse cx="60" cy="58" rx="46" ry="7.5" fill="#3A2812"/>
+    <!-- broth surface -->
+    <ellipse cx="60" cy="56.5" rx="43" ry="6" fill="#EAD2A0"/>
+    <!-- noodle mound -->
+    <ellipse cx="60" cy="54" rx="40" ry="6" fill="#FFF5DC"/>
+    <ellipse cx="60" cy="53" rx="37" ry="4.5" fill="#FFFDF5"/>
+    <!-- noodle strands -->
+    <g stroke="#FFE8A8" stroke-width="0.7" fill="none" stroke-linecap="round" opacity="0.7">
+      <path d="M25 53 Q36 51 47 53 Q58 55 69 53 Q80 51 91 53"/>
+      <path d="M27 56 Q38 54 49 56 Q60 58 71 56 Q82 54 93 56"/>
+      <path d="M31 51 Q42 49 53 51 Q64 53 75 51 Q86 49 91 50"/>
+    </g>
+    <!-- topping (noodle toppings) -->
     ${topping}
-    <!-- kawaii face on bowl -->
+    <!-- kawaii face on bowl (positioned in upper bowl area, above the blue band) -->
     <g>
-      <ellipse cx="48" cy="86" rx="2.8" ry="3.2" fill="#2C1810"/>
-      <ellipse cx="72" cy="86" rx="2.8" ry="3.2" fill="#2C1810"/>
-      <ellipse cx="48.8" cy="84.8" rx="0.9" ry="1.1" fill="#fff"/>
-      <ellipse cx="72.8" cy="84.8" rx="0.9" ry="1.1" fill="#fff"/>
-      <path d="M53 92 Q60 97 67 92" stroke="#2C1810" stroke-width="2.2" fill="none" stroke-linecap="round"/>
-      <ellipse cx="40" cy="91" rx="4" ry="2.5" fill="#FF8A9B" opacity="0.55"/>
-      <ellipse cx="80" cy="91" rx="4" ry="2.5" fill="#FF8A9B" opacity="0.55"/>
+      <ellipse cx="50" cy="70" rx="2.2" ry="2.6" fill="#2C1810"/>
+      <ellipse cx="70" cy="70" rx="2.2" ry="2.6" fill="#2C1810"/>
+      <ellipse cx="50.6" cy="69.2" rx="0.6" ry="0.8" fill="#fff"/>
+      <ellipse cx="70.6" cy="69.2" rx="0.6" ry="0.8" fill="#fff"/>
+      <path d="M55 75 Q60 78 65 75" stroke="#2C1810" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+      <ellipse cx="43" cy="74" rx="3" ry="1.8" fill="#FF8A9B" opacity="0.6"/>
+      <ellipse cx="77" cy="74" rx="3" ry="1.8" fill="#FF8A9B" opacity="0.6"/>
     </g>
   </svg>`;
 }
@@ -669,6 +852,13 @@ function tempuraSVG(){
 }
 
 const questions = [
+  {key:'area',title:'どのエリアに行く？',options:[
+    {value:'takamatsu',label:'高松市内',desc:'駅・中心部エリア',icon:'🏙️'},
+    {value:'sakaide',label:'坂出・丸亀',desc:'うどん激戦区',icon:'🌾'},
+    {value:'chusan',label:'中讃 (綾川など)',desc:'山あいの名店エリア',icon:'⛰️'},
+    {value:'seisan',label:'西讃 (観音寺)',desc:'銭形で有名',icon:'🌅'},
+    {value:'tosan',label:'東讃 (さぬき市)',desc:'小豆島寄り',icon:'🌊'}
+  ]},
   {key:'noodle',title:'麺はどんなのが好き？',options:[
     {value:'koshi',label:'コシ強めでガツン',desc:'硬派な歯ごたえ派',icon:'💪'},
     {value:'shikkari',label:'しっかり讃岐定番',desc:'ちょうどいい歯切れ',icon:'🙆'},
@@ -694,13 +884,6 @@ const questions = [
     {value:'shoyu',label:'しょうゆうどん',desc:'麺の味を楽しむ',icon:'🍶'},
     {value:'tempura',label:'天ぷらもりもり',desc:'揚げ物と一緒に',icon:'🍤'}
   ]},
-  {key:'area',title:'どのエリアに行く？',options:[
-    {value:'takamatsu',label:'高松市内',desc:'駅・中心部エリア',icon:'🏙️'},
-    {value:'sakaide',label:'坂出・丸亀',desc:'うどん激戦区',icon:'🌾'},
-    {value:'chusan',label:'中讃 (綾川など)',desc:'山あいの名店エリア',icon:'⛰️'},
-    {value:'seisan',label:'西讃 (観音寺)',desc:'銭形で有名',icon:'🌅'},
-    {value:'tosan',label:'東讃 (さぬき市)',desc:'小豆島寄り',icon:'🌊'}
-  ]},
   {key:'queue',title:'行列は？',options:[
     {value:'ok',label:'並んでも食べたい',desc:'話題の人気店を狙う',icon:'🔥'},
     {value:'normal',label:'ほどほどなら',desc:'少し並ぶくらい',icon:'🙂'},
@@ -717,18 +900,7 @@ let state = {
 
 const app = document.getElementById('app');
 
-function now(){
-  const d = new Date();
-  return String(d.getHours()).padStart(2,'0') + ':' + String(d.getMinutes()).padStart(2,'0');
-}
-
-function statusBarHTML(){
-  return `
-    <div class="statusbar">
-      <div>${now()}</div>
-      <div class="icons"><span>●●●</span><span>📶</span><span>🔋</span></div>
-    </div>`;
-}
+function statusBarHTML(){ return ''; }
 
 function navBarHTML(title, showBack){
   return `
@@ -873,6 +1045,8 @@ function renderResult(){
   const alts = results.slice(1, 4);
   const maxScore = 22; // approximate max
   const pct = Math.max(30, Math.min(99, Math.round(top.score / maxScore * 100)));
+  // Save for share card
+  state.topResult = {store: top.store, matches: top.matches, pct: pct};
 
   const s = top.store;
   const matchSet = new Set(top.matches);
@@ -919,9 +1093,16 @@ function renderResult(){
             <div class="pct">${pct}%</div>
           </div>
           <div class="desc">${s.desc}</div>
+          <div class="map-embed">
+            <iframe src="https://maps.google.com/maps?q=${encodeURIComponent(s.name + ' 香川 うどん')}&z=15&output=embed" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+            <div class="map-overlay">📍 実際の場所</div>
+          </div>
           <div class="tags">${tagsHTML}</div>
           <a class="map-link" href="${mapURL(s.name)}" target="_blank" rel="noopener">
-            <span>🗺️</span><span>Google マップで開く</span>
+            <span>🗺️</span><span>Google マップで開く（写真・口コミ）</span>
+          </a>
+          <a class="photo-link" href="https://www.google.com/search?tbm=isch&q=${encodeURIComponent(s.name + ' 香川 うどん')}" target="_blank" rel="noopener">
+            <span>📸</span><span>お店の写真を検索</span>
           </a>
         </div>
         <div class="alt-section">
@@ -929,7 +1110,7 @@ function renderResult(){
           ${altsHTML}
         </div>
         <div class="restart-row">
-          <button class="btn ghost" onclick="shareResult('${s.name}')">シェア</button>
+          <button class="btn ghost" onclick="openShareModal()">📸 カードをシェア</button>
           <button class="btn" onclick="restart()">もう一度診断</button>
         </div>
         <div class="footer-note">
@@ -990,25 +1171,135 @@ function restart(){
   render();
 }
 
-function shareResult(name){
-  const text = `讃岐うどん診断で「${name}」がおすすめされた🍜 #讃岐うどん診断`;
-  if(navigator.share){
-    navigator.share({title:'讃岐うどん診断',text:text}).catch(()=>{});
-  } else if(navigator.clipboard){
-    navigator.clipboard.writeText(text).then(()=>{
-      alert('結果をコピーしました！\n\n' + text);
-    });
-  } else {
-    alert(text);
+// Populate the hidden share card element with current result data
+function populateShareCard(){
+  const r = state.topResult;
+  if(!r) return;
+  const s = r.store;
+  document.getElementById('shareCardIcon').innerHTML = udonIcon(s.menu, 320);
+  document.getElementById('shareCardArea').textContent = '📍 ' + areaNames[s.area];
+  document.getElementById('shareCardStore').textContent = s.name;
+  document.getElementById('shareCardDesc').textContent = s.desc;
+  document.getElementById('shareCardPct').textContent = r.pct + '%';
+  document.getElementById('shareCardBar').style.width = r.pct + '%';
+  // URL (public URL if available, else fallback)
+  const url = window.location.hostname && window.location.hostname !== 'localhost'
+    ? window.location.hostname + window.location.pathname
+    : '讃岐うどん診断';
+  document.getElementById('shareCardUrl').textContent = url;
+  // Tags
+  const matchSet = new Set(r.matches);
+  const tagList = [
+    {k:'style',label:styleNames[s.style]},
+    {k:'menu',label:'名物: ' + menuNames[s.menu]},
+    {k:'noodle',label:'麺: ' + noodleNames[s.noodle]},
+    {k:'dashi',label:'出汁: ' + dashiNames[s.dashi]}
+  ];
+  const tagsEl = document.getElementById('shareCardTags');
+  tagsEl.innerHTML = '';
+  for(const t of tagList){
+    const el = document.createElement('div');
+    const isMatch = matchSet.has(t.k);
+    el.style.cssText = 'padding:10px 18px;border-radius:14px;font-size:18px;font-weight:700;' +
+      (isMatch ? 'background:#E8F5E9;color:#2E7D32' : 'background:#F2F2F7;color:#3A3A3C');
+    el.textContent = (isMatch ? '✓ ' : '') + t.label;
+    tagsEl.appendChild(el);
   }
 }
 
+// Generate PNG data URL from the share card element
+async function generateShareImage(){
+  populateShareCard();
+  // Wait a tick for SVG/images to render
+  await new Promise(r => setTimeout(r, 80));
+  const node = document.getElementById('shareCard');
+  if(typeof domtoimage === 'undefined'){
+    throw new Error('ライブラリの読み込みに失敗しました。ネットに繋いで再試行してください。');
+  }
+  return await domtoimage.toPng(node, {
+    width: 1080,
+    height: 1350,
+    cacheBust: true,
+    quality: 0.95
+  });
+}
+
+function closeShareModal(){
+  const m = document.querySelector('.share-modal');
+  if(m) m.remove();
+}
+
+async function openShareModal(){
+  if(!state.topResult) return;
+  // Create modal first with loading state
+  const host = document.getElementById('shareModalHost');
+  host.innerHTML = `
+    <div class="share-modal" onclick="if(event.target.classList.contains('share-modal-bg'))closeShareModal()">
+      <div class="share-modal-bg"></div>
+      <div class="share-modal-content">
+        <button class="share-close" onclick="closeShareModal()">×</button>
+        <h3>🎴 シェアカード</h3>
+        <div class="share-img-wrap">
+          <div class="share-loading">カードを生成中…</div>
+        </div>
+        <div class="share-hint" style="margin-top:6px">画像が生成されるまで数秒かかります</div>
+        <div class="share-buttons" style="visibility:hidden">
+          <button class="btn ghost" id="dlBtn">📥 画像保存</button>
+          <button class="btn" id="shareBtn">📱 シェア</button>
+        </div>
+      </div>
+    </div>
+  `;
+  try{
+    const dataUrl = await generateShareImage();
+    window._lastShareImg = dataUrl;
+    const imgWrap = host.querySelector('.share-img-wrap');
+    imgWrap.innerHTML = `<img src="${dataUrl}" alt="診断結果カード" />`;
+    const btns = host.querySelector('.share-buttons');
+    btns.style.visibility = 'visible';
+    host.querySelector('.share-hint').textContent = '画像を長押しで保存もできます。SNSでシェアして友達もうどん旅に誘っちゃおう🍜';
+    host.querySelector('#dlBtn').onclick = downloadShareImage;
+    host.querySelector('#shareBtn').onclick = nativeShareImage;
+  }catch(e){
+    const imgWrap = host.querySelector('.share-img-wrap');
+    imgWrap.innerHTML = `<div class="share-loading" style="color:#D32F2F">生成に失敗しました<br><small>${e.message||''}</small></div>`;
+  }
+}
+
+function downloadShareImage(){
+  const dataUrl = window._lastShareImg;
+  if(!dataUrl) return;
+  const a = document.createElement('a');
+  a.href = dataUrl;
+  const nm = (state.topResult && state.topResult.store && state.topResult.store.name) || 'result';
+  a.download = `udon-shindan-${nm}.png`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+}
+
+async function nativeShareImage(){
+  const dataUrl = window._lastShareImg;
+  if(!dataUrl) return;
+  try{
+    const blob = await fetch(dataUrl).then(r => r.blob());
+    const file = new File([blob], 'udon-shindan.png', {type: 'image/png'});
+    if(navigator.canShare && navigator.canShare({files: [file]})){
+      await navigator.share({
+        title: '讃岐うどん診断',
+        text: state.topResult ? `診断結果: ${state.topResult.store.name} 🍜 #讃岐うどん診断` : '讃岐うどん診断',
+        files: [file]
+      });
+      return;
+    }
+  }catch(e){
+    if(e && e.name === 'AbortError') return;
+  }
+  // Fallback: download the image
+  downloadShareImage();
+}
+
 render();
-// Update clock once per minute
-setInterval(() => {
-  const sb = document.querySelector('.statusbar > div:first-child');
-  if(sb) sb.textContent = now();
-}, 30000);
 </script>
 </body>
 </html>
