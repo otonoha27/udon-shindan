@@ -1,0 +1,1014 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="theme-color" content="#F8F3EE">
+<meta name="description" content="香川旅行のおすすめうどん店を6つの質問で診断するWebアプリ。讃岐うどんの名店19店舗から、あなたにぴったりの一杯を提案します。">
+<meta property="og:title" content="讃岐うどん診断 - 香川で出会う運命の一杯">
+<meta property="og:description" content="6つの質問に答えるだけ。あなたにぴったりの讃岐うどんの名店をレコメンド🍜">
+<meta property="og:type" content="website">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='48' fill='%23FFF3ED'/><ellipse cx='50' cy='58' rx='38' ry='8' fill='%235D3015'/><path d='M15 58 Q17 88 50 92 Q83 88 85 58 Z' fill='%238B5A2B'/><ellipse cx='50' cy='58' rx='36' ry='7' fill='%23D4A373'/><ellipse cx='50' cy='56' rx='33' ry='5' fill='%23FFF5DC'/><circle cx='42' cy='74' r='2.5' fill='%232C1810'/><circle cx='58' cy='74' r='2.5' fill='%232C1810'/><path d='M45 80 Q50 84 55 80' stroke='%232C1810' stroke-width='2' fill='none' stroke-linecap='round'/><ellipse cx='35' cy='79' rx='3' ry='2' fill='%23FF8A9B' opacity='0.6'/><ellipse cx='65' cy='79' rx='3' ry='2' fill='%23FF8A9B' opacity='0.6'/></svg>">
+<link rel="apple-touch-icon" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%23FFF3ED'/><ellipse cx='50' cy='58' rx='38' ry='8' fill='%235D3015'/><path d='M15 58 Q17 88 50 92 Q83 88 85 58 Z' fill='%238B5A2B'/><ellipse cx='50' cy='58' rx='36' ry='7' fill='%23D4A373'/><ellipse cx='50' cy='56' rx='33' ry='5' fill='%23FFF5DC'/><circle cx='42' cy='74' r='2.5' fill='%232C1810'/><circle cx='58' cy='74' r='2.5' fill='%232C1810'/><path d='M45 80 Q50 84 55 80' stroke='%232C1810' stroke-width='2' fill='none' stroke-linecap='round'/></svg>">
+<title>讃岐うどん診断 - 香川で出会う運命の一杯</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;-webkit-touch-callout:none}
+button,.option,.btn{-webkit-user-select:none;user-select:none}
+html,body{height:100%;overscroll-behavior:none}
+body{
+  font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','Helvetica Neue','Hiragino Sans','Hiragino Kaku Gothic ProN',sans-serif;
+  background:#EBE4DB;
+  color:#1C1C1E;
+  font-size:17px;
+  line-height:1.4;
+  -webkit-font-smoothing:antialiased;
+  overflow:hidden;
+}
+.app{
+  max-width:430px;
+  margin:0 auto;
+  height:100vh;
+  height:100dvh;
+  position:relative;
+  overflow:hidden;
+  background:linear-gradient(180deg,#FFF5EC 0%,#F8F3EE 60%,#F2EADF 100%);
+  box-shadow:0 0 60px rgba(0,0,0,.08);
+}
+.statusbar{
+  height:calc(env(safe-area-inset-top,20px) + 20px);
+  display:flex;
+  align-items:flex-end;
+  justify-content:space-between;
+  padding:0 24px 4px;
+  font-size:15px;
+  font-weight:600;
+  color:#1C1C1E;
+}
+.statusbar .icons{display:flex;gap:5px;align-items:center;font-size:14px}
+.navbar{
+  height:44px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  position:relative;
+  padding:0 16px;
+}
+.navbar .back{
+  position:absolute;
+  left:12px;
+  top:50%;
+  transform:translateY(-50%);
+  color:#FF6B35;
+  font-size:17px;
+  font-weight:400;
+  background:none;
+  border:none;
+  cursor:pointer;
+  padding:8px 10px;
+  display:flex;
+  align-items:center;
+  gap:2px;
+}
+.navbar .back span{font-size:22px;font-weight:300;margin-right:2px}
+.navbar .title{font-size:17px;font-weight:600;letter-spacing:-.2px}
+
+.screen{
+  position:absolute;
+  top:0;left:0;right:0;bottom:0;
+  display:flex;
+  flex-direction:column;
+  opacity:1;
+  transform:translateX(0);
+  transition:transform .4s cubic-bezier(.32,.72,0,1),opacity .3s;
+}
+.screen.enter-from-right{transform:translateX(100%);opacity:0}
+.screen.enter-from-left{transform:translateX(-30%);opacity:0}
+.screen.exit-to-left{transform:translateX(-30%);opacity:0}
+.screen.exit-to-right{transform:translateX(100%);opacity:0}
+
+.screen-content{
+  flex:1;
+  overflow-y:auto;
+  padding:8px 20px 140px;
+  -webkit-overflow-scrolling:touch;
+}
+
+/* Start screen */
+.hero{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  min-height:100%;
+  text-align:center;
+  padding:20px 8px 60px;
+}
+.hero .udon-hero{
+  width:200px;
+  height:200px;
+  margin-bottom:4px;
+  filter:drop-shadow(0 14px 22px rgba(255,107,53,.25));
+  animation:float 3.5s ease-in-out infinite;
+}
+.hero .udon-hero svg{width:100%;height:100%}
+.floating-bits{
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+}
+.floating-bits .bit{
+  position:absolute;
+  width:36px;height:36px;
+}
+.floating-bits .b1{top:20px;left:-10px;animation:float 3s ease-in-out infinite .3s}
+.floating-bits .b2{top:40px;right:-14px;animation:float 3.2s ease-in-out infinite .6s}
+.floating-bits .b3{bottom:30px;right:4px;animation:float 3.4s ease-in-out infinite .9s}
+.hero-wrap{position:relative;width:200px;height:200px;margin-bottom:12px}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+.hero h1{
+  font-size:32px;
+  font-weight:800;
+  letter-spacing:-.8px;
+  margin:8px 0 10px;
+  color:#1C1C1E;
+}
+.hero h1 .accent{
+  background:linear-gradient(135deg,#FF6B35,#D84315);
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+  background-clip:text;
+}
+.hero .subtitle{
+  font-size:15px;
+  color:#636366;
+  line-height:1.6;
+  max-width:300px;
+  margin:0 auto 24px;
+}
+.chips{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+  justify-content:center;
+  margin-bottom:8px;
+}
+.chip{
+  font-size:12px;
+  background:#fff;
+  padding:7px 12px;
+  border-radius:20px;
+  color:#3A3A3C;
+  font-weight:600;
+  box-shadow:0 2px 8px rgba(0,0,0,.04);
+}
+
+/* Progress */
+.progress-wrap{padding:4px 20px 14px}
+.progress{
+  display:flex;
+  gap:5px;
+}
+.progress .dot{
+  height:4px;
+  flex:1;
+  background:rgba(0,0,0,.08);
+  border-radius:2px;
+  transition:background .35s ease;
+  overflow:hidden;
+  position:relative;
+}
+.progress .dot.active{background:#FF6B35}
+.progress .dot.current{
+  background:rgba(0,0,0,.08);
+}
+.progress .dot.current::after{
+  content:'';
+  position:absolute;
+  inset:0;
+  background:#FF6B35;
+  animation:fillBar .4s ease forwards;
+  transform-origin:left;
+}
+@keyframes fillBar{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+
+.question-header{padding:4px 4px 16px}
+.question-header .num{
+  font-size:12px;
+  font-weight:700;
+  color:#FF6B35;
+  letter-spacing:1.2px;
+  margin-bottom:6px;
+}
+.question-header h2{
+  font-size:25px;
+  font-weight:800;
+  letter-spacing:-.4px;
+  line-height:1.3;
+}
+
+/* Option cards */
+.options{display:flex;flex-direction:column;gap:10px}
+.option{
+  background:#fff;
+  border-radius:16px;
+  padding:16px 16px;
+  display:flex;
+  align-items:center;
+  gap:14px;
+  border:2px solid transparent;
+  width:100%;
+  text-align:left;
+  cursor:pointer;
+  transition:transform .15s,box-shadow .2s,border-color .2s,background .2s;
+  box-shadow:0 2px 10px rgba(0,0,0,.04);
+  font-family:inherit;
+  color:inherit;
+  font-size:16px;
+  position:relative;
+}
+.option:active{transform:scale(.97)}
+.option.selected{
+  border-color:#FF6B35;
+  background:#FFF8F4;
+  box-shadow:0 4px 16px rgba(255,107,53,.2);
+}
+.option .icon{
+  font-size:32px;
+  width:48px;
+  height:48px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  flex-shrink:0;
+  background:#FFF3ED;
+  border-radius:12px;
+}
+.option.selected .icon{background:#FFE4D3}
+.option .content{flex:1;min-width:0}
+.option .label{font-weight:700;margin-bottom:2px;letter-spacing:-.2px}
+.option .desc{font-size:12px;color:#8E8E93;font-weight:500}
+.option .chev{color:#D1D1D6;font-size:16px;font-weight:400}
+.option.selected .chev{color:#FF6B35}
+.option.selected .chev::before{content:'✓';font-size:16px;font-weight:700}
+.option:not(.selected) .chev::before{content:'›';font-size:22px;font-weight:300}
+
+/* CTA */
+.cta-area{
+  position:absolute;
+  left:0;right:0;bottom:0;
+  padding:16px 20px calc(20px + env(safe-area-inset-bottom,0));
+  background:linear-gradient(180deg,transparent 0,rgba(248,243,238,.9) 30%,#F2EADF 100%);
+  pointer-events:none;
+}
+.cta-area > *{pointer-events:auto}
+.btn{
+  background:linear-gradient(135deg,#FF6B35,#E85A2C);
+  color:#fff;
+  border:none;
+  border-radius:26px;
+  padding:17px 24px;
+  font-size:17px;
+  font-weight:700;
+  width:100%;
+  cursor:pointer;
+  box-shadow:0 8px 20px rgba(255,107,53,.35);
+  transition:transform .15s,opacity .2s,box-shadow .2s;
+  font-family:inherit;
+  letter-spacing:-.2px;
+}
+.btn:active{transform:scale(.97)}
+.btn[disabled]{opacity:.35;box-shadow:none;cursor:not-allowed}
+.btn.secondary{
+  background:#fff;
+  color:#FF6B35;
+  box-shadow:0 2px 10px rgba(0,0,0,.06);
+}
+.btn.ghost{
+  background:rgba(255,255,255,.6);
+  color:#3A3A3C;
+  box-shadow:none;
+  font-weight:600;
+}
+
+/* Result */
+.result-label{
+  text-align:center;
+  padding:12px 0 4px;
+}
+.result-label .tag-top{
+  display:inline-block;
+  font-size:11px;
+  font-weight:800;
+  color:#fff;
+  background:linear-gradient(135deg,#FF6B35,#E85A2C);
+  padding:5px 12px;
+  border-radius:12px;
+  letter-spacing:1.5px;
+  margin-bottom:8px;
+  box-shadow:0 4px 10px rgba(255,107,53,.25);
+}
+.result-label h2{
+  font-size:20px;
+  font-weight:800;
+  letter-spacing:-.3px;
+  line-height:1.3;
+}
+
+.store-card{
+  background:#fff;
+  border-radius:22px;
+  padding:28px 20px 20px;
+  margin:16px 0 12px;
+  box-shadow:0 12px 36px rgba(0,0,0,.08);
+  position:relative;
+  overflow:hidden;
+}
+.store-card::before{
+  content:'';
+  position:absolute;
+  top:0;left:0;right:0;height:5px;
+  background:linear-gradient(90deg,#FF6B35,#FFAB40,#FF6B35);
+}
+.store-card .store-emoji{
+  text-align:center;
+  margin-bottom:10px;
+  line-height:1;
+}
+.store-card .store-emoji svg{
+  width:150px;
+  height:150px;
+  filter:drop-shadow(0 8px 16px rgba(139,90,43,.2));
+}
+.store-card .area-badge{
+  display:inline-block;
+  font-size:11px;
+  font-weight:700;
+  color:#FF6B35;
+  background:#FFF3ED;
+  padding:4px 10px;
+  border-radius:10px;
+  margin-bottom:8px;
+}
+.store-card h3{
+  font-size:25px;
+  font-weight:800;
+  margin-bottom:12px;
+  letter-spacing:-.4px;
+}
+.store-card .desc{
+  font-size:14px;
+  color:#3A3A3C;
+  line-height:1.65;
+  margin-bottom:16px;
+  -webkit-user-select:text;user-select:text;
+}
+.match-score{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  background:#FFF8F4;
+  padding:10px 14px;
+  border-radius:12px;
+  margin-bottom:14px;
+}
+.match-score .label{font-size:12px;color:#8E8E93;font-weight:600}
+.match-score .bar{
+  flex:1;
+  height:6px;
+  background:#F2F2F7;
+  border-radius:3px;
+  overflow:hidden;
+}
+.match-score .bar-fill{
+  height:100%;
+  background:linear-gradient(90deg,#FF6B35,#FFAB40);
+  border-radius:3px;
+  transition:width 1s cubic-bezier(.32,.72,0,1);
+}
+.match-score .pct{font-size:13px;font-weight:800;color:#FF6B35;min-width:34px;text-align:right}
+
+.tags{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px}
+.tag{
+  font-size:11px;
+  background:#F2F2F7;
+  color:#3A3A3C;
+  padding:5px 10px;
+  border-radius:8px;
+  font-weight:600;
+}
+.tag.match{background:#E8F5E9;color:#2E7D32}
+.tag.match::before{content:'✓ '}
+
+.map-link{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:6px;
+  background:#F2F2F7;
+  color:#007AFF;
+  padding:13px;
+  border-radius:12px;
+  text-decoration:none;
+  font-weight:700;
+  font-size:15px;
+  transition:background .2s,transform .15s;
+}
+.map-link:active{background:#E5E5EA;transform:scale(.98)}
+
+.alt-section{margin-top:24px}
+.alt-section h4{
+  font-size:12px;
+  font-weight:700;
+  color:#636366;
+  letter-spacing:1.5px;
+  margin-bottom:10px;
+  padding-left:4px;
+}
+.alt-card{
+  background:#fff;
+  border-radius:14px;
+  padding:12px 14px;
+  margin-bottom:8px;
+  display:flex;
+  align-items:center;
+  gap:12px;
+  box-shadow:0 2px 8px rgba(0,0,0,.04);
+  transition:transform .15s;
+  cursor:pointer;
+  border:none;
+  width:100%;
+  text-align:left;
+  font-family:inherit;
+}
+.alt-card:active{transform:scale(.98)}
+.alt-card .alt-emoji{
+  width:48px;
+  height:48px;
+  display:flex;align-items:center;justify-content:center;
+  background:#FFF3ED;
+  border-radius:12px;
+  flex-shrink:0;
+}
+.alt-card .alt-emoji svg{width:44px;height:44px}
+.alt-card .alt-content{flex:1;min-width:0}
+.alt-card .alt-name{font-weight:700;font-size:15px;margin-bottom:2px;letter-spacing:-.2px}
+.alt-card .alt-meta{font-size:12px;color:#8E8E93;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.alt-card .alt-chev{color:#C7C7CC;font-size:20px;font-weight:300}
+
+.restart-row{display:flex;gap:10px;margin-top:20px;padding:0 4px}
+.restart-row .btn{flex:1;padding:14px 20px;font-size:15px}
+
+.footer-note{
+  text-align:center;
+  font-size:11px;
+  color:#8E8E93;
+  margin-top:14px;
+  padding:0 10px;
+  line-height:1.5;
+}
+</style>
+</head>
+<body>
+<div class="app" id="app"></div>
+
+<script>
+const stores = [
+  {id:'yamagoe',name:'山越うどん',emoji:'🍳',area:'chusan',noodle:'shikkari',dashi:'any',style:'self',menu:'kamatama',queue:'crowded',
+    desc:'釜玉うどん発祥の店。中讃の山あいにあるセルフの聖地で、とろりとした卵と出汁醤油が麺に絡む至福の一杯。'},
+  {id:'bakaichidai',name:'うどんバカ一代',emoji:'🧈',area:'takamatsu',noodle:'shikkari',dashi:'light',style:'ippan',menu:'kamatama',queue:'crowded',
+    desc:'釜バターうどん発祥。高松中心部にあり朝6時から営業。観光客にも地元にも愛される定番人気店。'},
+  {id:'kanoka',name:'長田 in 香の香',emoji:'🍜',area:'chusan',noodle:'mochi',dashi:'iriko',style:'ippan',menu:'kamatama',queue:'crowded',
+    desc:'釜揚げうどんの名店。熱々のとっくりに入ったつゆが印象的で、もちもちの麺との相性が抜群。'},
+  {id:'gamou',name:'がもううどん',emoji:'🌾',area:'sakaide',noodle:'shikkari',dashi:'iriko',style:'self',menu:'kake',queue:'crowded',
+    desc:'田んぼの中に佇む超ディープなセルフの聖地。朝から行列、安くて旨い讃岐うどんの象徴的存在。'},
+  {id:'hinode',name:'日の出製麺所',emoji:'☀️',area:'sakaide',noodle:'koshi',dashi:'any',style:'seimenjo',menu:'shoyu',queue:'crowded',
+    desc:'営業時間が11時半～12時半の60分間だけの伝説の製麺所。極限までコシの強い麺は一度は体験すべき。'},
+  {id:'tanikawa',name:'谷川米穀店',emoji:'⛰️',area:'chusan',noodle:'koshi',dashi:'any',style:'seimenjo',menu:'shoyu',queue:'crowded',
+    desc:'山奥にある秘境のうどん店。青唐辛子をかけて食べるシンプルなしょうゆうどんが名物の玄人向け。'},
+  {id:'ikegami',name:'池上製麺所',emoji:'👵',area:'chusan',noodle:'mochi',dashi:'iriko',style:'seimenjo',menu:'kake',queue:'normal',
+    desc:'「るみばあちゃん」で知られた老舗の製麺所。素朴でやさしい味わいの讃岐うどんを楽しめる。'},
+  {id:'okasen',name:'おか泉',emoji:'🦐',area:'sakaide',noodle:'koshi',dashi:'light',style:'ippan',menu:'tempura',queue:'crowded',
+    desc:'ひや天おろしが看板メニュー。特大の海老天とコシ強めの麺で、食べ応え満点の一杯が楽しめる。'},
+  {id:'nakamura',name:'中村うどん',emoji:'🍲',area:'sakaide',noodle:'shikkari',dashi:'iriko',style:'self',menu:'bukkake',queue:'normal',
+    desc:'讃岐うどんの代表格。ぶっかけもかけも、どれを頼んでも間違いない安定のうまさで愛され続ける名店。'},
+  {id:'sakaeda',name:'さか枝うどん',emoji:'🏙️',area:'takamatsu',noodle:'shikkari',dashi:'iriko',style:'self',menu:'kake',queue:'normal',
+    desc:'高松中心部にあるセルフの名店。駅からも徒歩圏内、朝から気軽に入れる王道の一杯。'},
+  {id:'chikusei',name:'竹清',emoji:'🥚',area:'takamatsu',noodle:'shikkari',dashi:'light',style:'self',menu:'tempura',queue:'normal',
+    desc:'半熟卵天とちくわ天が名物。高松市街で気軽に天ぷら天国を味わえるセルフ店。'},
+  {id:'wataya',name:'麺処 綿谷',emoji:'🥩',area:'sakaide',noodle:'mochi',dashi:'strong',style:'self',menu:'bukkake',queue:'crowded',
+    desc:'肉ぶっかけ・肉ざるうどんで大人気。甘辛い牛肉とボリューム満点の麺で、満足感MAXの一杯。'},
+  {id:'ippuku',name:'一福',emoji:'💪',area:'tosan',noodle:'koshi',dashi:'iriko',style:'ippan',menu:'bukkake',queue:'normal',
+    desc:'うどん通も唸る強烈なコシが自慢。噛めば噛むほど旨みが広がる、玄人好みのしっかり系の一杯。'},
+  {id:'tsuruya',name:'つるや',emoji:'🌅',area:'seisan',noodle:'mochi',dashi:'iriko',style:'self',menu:'kake',queue:'quiet',
+    desc:'観音寺エリアの定番店。素直な味わいで朝うどんにもぴったりの、気軽に立ち寄れる一杯。'},
+  {id:'matsushita',name:'松下製麺所',emoji:'🌿',area:'takamatsu',noodle:'shikkari',dashi:'iriko',style:'seimenjo',menu:'kake',queue:'normal',
+    desc:'高松市内で製麺所スタイルを味わえる貴重な店。素朴で実直、地元民にも愛される隠れ名店。'},
+  {id:'susaki',name:'須崎食料品店',emoji:'📦',area:'seisan',noodle:'koshi',dashi:'any',style:'seimenjo',menu:'kake',queue:'crowded',
+    desc:'その名の通り食料品店なのにうどんの名店。朝の数時間限定営業のレジェンド級スポット。'},
+  {id:'ueto',name:'上戸(うえと)うどん',emoji:'🏖️',area:'tosan',noodle:'shikkari',dashi:'iriko',style:'self',menu:'bukkake',queue:'normal',
+    desc:'海辺の絶景セルフ店。海を眺めながら讃岐うどんを食べるという贅沢な体験ができる。'},
+  {id:'yoshiya',name:'よしや',emoji:'🎋',area:'sakaide',noodle:'koshi',dashi:'iriko',style:'self',menu:'kake',queue:'crowded',
+    desc:'飯山町の超人気セルフ店。しっかりしたコシと香り高いいりこ出汁のバランスが絶妙。'},
+  {id:'kosaku',name:'手打ちうどん 小作',emoji:'🏮',area:'tosan',noodle:'shikkari',dashi:'iriko',style:'ippan',menu:'shoyu',queue:'quiet',
+    desc:'東讃エリアの隠れた名店。ゆったり座って食べられ、しょうゆうどんが絶品。'}
+];
+
+const areaNames = {
+  takamatsu:'高松市内',
+  sakaide:'坂出・丸亀',
+  chusan:'中讃エリア',
+  seisan:'西讃・観音寺',
+  tosan:'東讃・さぬき市'
+};
+const noodleNames = {koshi:'コシ強め',shikkari:'しっかり',mochi:'もちもち',any:'標準'};
+const dashiNames = {iriko:'いりこ',light:'あっさり',strong:'濃いめ',any:'標準'};
+const styleNames = {self:'セルフ',ippan:'一般店',seimenjo:'製麺所'};
+const menuNames = {kake:'かけ',bukkake:'ぶっかけ',kamatama:'釜玉・釜揚げ',shoyu:'しょうゆ',tempura:'天ぷら'};
+const queueNames = {crowded:'行列店',normal:'ほどほど',quiet:'空いてる'};
+
+// Cute udon bowl SVG with kawaii face and topping variations
+function getTopping(v){
+  switch(v){
+    case 'kamatama':
+      return `
+        <ellipse cx="60" cy="48" rx="11" ry="5.5" fill="#FF9800"/>
+        <ellipse cx="60" cy="47" rx="9.5" ry="4.3" fill="#FFB74D"/>
+        <ellipse cx="56" cy="45" rx="3.2" ry="1.5" fill="#FFE082" opacity="0.9"/>
+        <circle cx="38" cy="50" r="1.5" fill="#7CB342"/>
+        <circle cx="82" cy="51" r="1.5" fill="#7CB342"/>
+        <circle cx="60" cy="56" r="1.3" fill="#7CB342"/>`;
+    case 'tempura':
+      return `
+        <g transform="translate(60 44)">
+          <path d="M-20 6 L-18 -4 L-14 1 L-11 -7 L-7 -1 L-3 -9 L1 -2 L5 -8 L9 -1 L13 -5 L16 -1 L19 5 Q19 9 0 9 Q-19 9 -20 6 Z" fill="#E8A856"/>
+          <path d="M-18 -3 Q-15 -6 -13 -3 M-10 -5 Q-7 -8 -4 -5 M-2 -6 Q1 -9 4 -6 M7 -5 Q10 -8 13 -5" stroke="#D2691E" stroke-width="0.6" fill="none" opacity="0.7"/>
+          <path d="M-16 3 Q0 7 16 3" stroke="#BF360C" stroke-width="0.8" fill="none" opacity="0.5"/>
+          <path d="M16 4 L23 0 L20 6 Z" fill="#E53935"/>
+          <path d="M16 4 L22 0" stroke="#B71C1C" stroke-width="0.5"/>
+        </g>
+        <circle cx="32" cy="54" r="1.5" fill="#7CB342"/>
+        <circle cx="88" cy="54" r="1.5" fill="#7CB342"/>`;
+    case 'bukkake':
+      return `
+        <ellipse cx="60" cy="48" rx="7" ry="2.5" fill="#fff" opacity="0.9"/>
+        <path d="M53 48 Q60 45 67 48" stroke="#B0BEC5" stroke-width="0.4" fill="none" opacity="0.5"/>
+        <circle cx="40" cy="51" r="1.1" fill="#F4A460"/>
+        <circle cx="45" cy="49" r="1.1" fill="#E8A856"/>
+        <circle cx="50" cy="51" r="1.1" fill="#F4A460"/>
+        <circle cx="70" cy="50" r="1.1" fill="#E8A856"/>
+        <circle cx="75" cy="49" r="1.1" fill="#F4A460"/>
+        <circle cx="80" cy="51" r="1.1" fill="#E8A856"/>
+        <circle cx="36" cy="53" r="1.4" fill="#7CB342"/>
+        <circle cx="84" cy="53" r="1.4" fill="#7CB342"/>
+        <circle cx="60" cy="44" r="1.4" fill="#558B2F"/>`;
+    case 'shoyu':
+      return `
+        <circle cx="38" cy="48" r="4.5" fill="#FFEB3B"/>
+        <circle cx="38" cy="48" r="3.5" fill="#FFF59D"/>
+        <path d="M35 48 L41 48 M38 45 L38 51" stroke="#FDD835" stroke-width="0.6"/>
+        <circle cx="38" cy="48" r="0.6" fill="#F9A825"/>
+        <ellipse cx="65" cy="50" rx="6" ry="2" fill="#4E342E" opacity="0.35"/>
+        <circle cx="78" cy="48" r="1.5" fill="#7CB342"/>
+        <circle cx="55" cy="52" r="1.5" fill="#7CB342"/>
+        <circle cx="68" cy="46" r="1.2" fill="#558B2F"/>`;
+    case 'kake':
+    default:
+      return `
+        <g transform="translate(0 0)">
+          <path d="M38 44 Q39 40 46 40 Q53 40 54 44 L54 53 L38 53 Z" fill="#fff"/>
+          <path d="M38 44 Q39 40 46 40 Q53 40 54 44" stroke="#F06292" stroke-width="1.4" fill="none"/>
+          <path d="M40 46 Q46 43 52 46" stroke="#F06292" stroke-width="0.7" fill="none"/>
+          <path d="M42 48 Q46 45 50 48" stroke="#F06292" stroke-width="0.5" fill="none" opacity="0.7"/>
+        </g>
+        <circle cx="68" cy="49" r="2.2" fill="#AED581"/>
+        <circle cx="68" cy="49" r="1.1" fill="#558B2F"/>
+        <circle cx="78" cy="47" r="1.8" fill="#AED581"/>
+        <circle cx="78" cy="47" r="0.9" fill="#558B2F"/>
+        <circle cx="84" cy="51" r="1.5" fill="#7CB342"/>`;
+  }
+}
+
+function udonIcon(variant, size){
+  size = size || 120;
+  const topping = getTopping(variant);
+  return `<svg viewBox="0 0 120 120" width="${size}" height="${size}" xmlns="http://www.w3.org/2000/svg" style="display:block;margin:0 auto;overflow:visible">
+    <defs>
+      <linearGradient id="bowlG-${variant}" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="#A0694A"/>
+        <stop offset="1" stop-color="#5D3015"/>
+      </linearGradient>
+    </defs>
+    <!-- steam -->
+    <g opacity="0.5" fill="none" stroke="#B8B8B8" stroke-width="1.8" stroke-linecap="round">
+      <path d="M42 26 Q37 20 42 14 Q47 8 42 2"/>
+      <path d="M60 29 Q55 22 60 14 Q65 7 60 0"/>
+      <path d="M78 26 Q73 20 78 14 Q83 8 78 2"/>
+    </g>
+    <!-- shadow -->
+    <ellipse cx="60" cy="114" rx="42" ry="3" fill="#000" opacity="0.1"/>
+    <!-- bowl body -->
+    <path d="M18 58 Q20 104 60 109 Q100 104 102 58 Z" fill="url(#bowlG-${variant})"/>
+    <!-- bowl wave pattern -->
+    <path d="M28 82 Q33 79 38 82 T48 82 T58 82 T68 82 T78 82 T88 82 T92 82" stroke="#4E2A0F" stroke-width="1.2" fill="none" opacity="0.5"/>
+    <path d="M30 88 Q34 86 38 88 T46 88 T54 88 T62 88 T70 88 T78 88 T86 88" stroke="#4E2A0F" stroke-width="0.8" fill="none" opacity="0.3"/>
+    <!-- bowl rim -->
+    <ellipse cx="60" cy="58" rx="41" ry="8" fill="#5D3015"/>
+    <ellipse cx="60" cy="57" rx="39" ry="6.5" fill="#D4A373"/>
+    <!-- broth -->
+    <ellipse cx="60" cy="55.5" rx="37" ry="5.5" fill="#EAD2A0"/>
+    <!-- noodle mound base -->
+    <ellipse cx="60" cy="54" rx="35" ry="5.5" fill="#FFF5DC"/>
+    <!-- noodle strands (visible wavy surface) -->
+    <g stroke="#FFE8A8" stroke-width="0.8" fill="none" stroke-linecap="round" opacity="0.7">
+      <path d="M28 53 Q38 51 48 53 Q58 55 68 53 Q78 51 88 53"/>
+      <path d="M30 56 Q40 54 50 56 Q60 58 70 56 Q80 54 90 56"/>
+      <path d="M34 51 Q44 49 54 51 Q64 53 74 51 Q84 49 88 50"/>
+    </g>
+    <!-- topping -->
+    ${topping}
+    <!-- kawaii face on bowl -->
+    <g>
+      <ellipse cx="48" cy="86" rx="2.8" ry="3.2" fill="#2C1810"/>
+      <ellipse cx="72" cy="86" rx="2.8" ry="3.2" fill="#2C1810"/>
+      <ellipse cx="48.8" cy="84.8" rx="0.9" ry="1.1" fill="#fff"/>
+      <ellipse cx="72.8" cy="84.8" rx="0.9" ry="1.1" fill="#fff"/>
+      <path d="M53 92 Q60 97 67 92" stroke="#2C1810" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+      <ellipse cx="40" cy="91" rx="4" ry="2.5" fill="#FF8A9B" opacity="0.55"/>
+      <ellipse cx="80" cy="91" rx="4" ry="2.5" fill="#FF8A9B" opacity="0.55"/>
+    </g>
+  </svg>`;
+}
+
+// Small decorative SVGs for the hero floating bits
+function chopsticksSVG(){
+  return `<svg viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg">
+    <rect x="8" y="6" width="3" height="30" rx="1.5" fill="#8D6E63" transform="rotate(-15 10 20)"/>
+    <rect x="16" y="6" width="3" height="30" rx="1.5" fill="#8D6E63" transform="rotate(-10 17 20)"/>
+    <g stroke="#fff" stroke-width="2" fill="none" stroke-linecap="round">
+      <path d="M24 22 Q28 18 32 22 Q36 26 34 30"/>
+    </g>
+  </svg>`;
+}
+function kamabokoSVG(){
+  return `<svg viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg">
+    <path d="M6 30 Q8 10 20 10 Q32 10 34 30 Z" fill="#fff" stroke="#E0E0E0" stroke-width="1"/>
+    <path d="M10 28 Q12 14 20 14 Q28 14 30 28" stroke="#F06292" stroke-width="2" fill="none"/>
+    <path d="M13 27 Q15 17 20 17 Q25 17 27 27" stroke="#F8BBD0" stroke-width="1" fill="none"/>
+  </svg>`;
+}
+function tempuraSVG(){
+  return `<svg viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg">
+    <g transform="translate(20 22)">
+      <path d="M-14 4 L-11 -6 L-8 1 L-5 -7 L-2 0 L1 -8 L4 -1 L7 -7 L10 -1 L13 3 Q13 8 0 8 Q-13 8 -14 4 Z" fill="#E8A856"/>
+      <path d="M-11 -2 Q-8 -5 -5 -2 M-3 -4 Q0 -7 3 -4 M6 -3 Q9 -6 11 -3" stroke="#D2691E" stroke-width="0.5" fill="none"/>
+      <path d="M10 3 L16 0 L14 5 Z" fill="#E53935"/>
+    </g>
+  </svg>`;
+}
+
+const questions = [
+  {key:'noodle',title:'麺はどんなのが好き？',options:[
+    {value:'koshi',label:'コシ強めでガツン',desc:'硬派な歯ごたえ派',icon:'💪'},
+    {value:'shikkari',label:'しっかり讃岐定番',desc:'ちょうどいい歯切れ',icon:'🙆'},
+    {value:'mochi',label:'もちもち柔らかめ',desc:'優しい食感が好き',icon:'☁️'},
+    {value:'any',label:'こだわりなし',desc:'どれでもOK',icon:'🤷'}
+  ]},
+  {key:'dashi',title:'だしの好みは？',options:[
+    {value:'iriko',label:'いりこ効いた王道',desc:'香ばしくて讃岐らしい',icon:'🐟'},
+    {value:'light',label:'あっさり上品',desc:'優しい味わい',icon:'💧'},
+    {value:'strong',label:'醤油ガツン濃いめ',desc:'パンチのある味',icon:'🔥'},
+    {value:'any',label:'こだわりなし',desc:'出汁は気にしない',icon:'🤷'}
+  ]},
+  {key:'style',title:'お店のスタイルは？',options:[
+    {value:'self',label:'セルフで気軽に',desc:'安くて早い讃岐流',icon:'🏃'},
+    {value:'ippan',label:'座ってゆっくり',desc:'落ち着いて食べたい',icon:'🪑'},
+    {value:'seimenjo',label:'製麺所の趣',desc:'ディープな雰囲気',icon:'🏚️'},
+    {value:'any',label:'こだわりなし',desc:'どこでもOK',icon:'🤷'}
+  ]},
+  {key:'menu',title:'注文したい一杯は？',options:[
+    {value:'kake',label:'かけうどん',desc:'基本にして至高',icon:'🍲'},
+    {value:'bukkake',label:'ぶっかけ',desc:'濃いめのつゆで',icon:'🥢'},
+    {value:'kamatama',label:'釜玉・釜揚げ',desc:'アツアツ系',icon:'🥚'},
+    {value:'shoyu',label:'しょうゆうどん',desc:'麺の味を楽しむ',icon:'🍶'},
+    {value:'tempura',label:'天ぷらもりもり',desc:'揚げ物と一緒に',icon:'🍤'}
+  ]},
+  {key:'area',title:'どのエリアに行く？',options:[
+    {value:'takamatsu',label:'高松市内',desc:'駅・中心部エリア',icon:'🏙️'},
+    {value:'sakaide',label:'坂出・丸亀',desc:'うどん激戦区',icon:'🌾'},
+    {value:'chusan',label:'中讃 (綾川など)',desc:'山あいの名店エリア',icon:'⛰️'},
+    {value:'seisan',label:'西讃 (観音寺)',desc:'銭形で有名',icon:'🌅'},
+    {value:'tosan',label:'東讃 (さぬき市)',desc:'小豆島寄り',icon:'🌊'}
+  ]},
+  {key:'queue',title:'行列は？',options:[
+    {value:'ok',label:'並んでも食べたい',desc:'話題の人気店を狙う',icon:'🔥'},
+    {value:'normal',label:'ほどほどなら',desc:'少し並ぶくらい',icon:'🙂'},
+    {value:'avoid',label:'できるだけ避けたい',desc:'空いてる店がいい',icon:'🚶'}
+  ]}
+];
+
+let state = {
+  step:-1,             // -1: start, 0..N-1: question, N: result
+  answers:{},
+  direction:'forward', // 'forward' or 'back'
+  maxScore:0
+};
+
+const app = document.getElementById('app');
+
+function now(){
+  const d = new Date();
+  return String(d.getHours()).padStart(2,'0') + ':' + String(d.getMinutes()).padStart(2,'0');
+}
+
+function statusBarHTML(){
+  return `
+    <div class="statusbar">
+      <div>${now()}</div>
+      <div class="icons"><span>●●●</span><span>📶</span><span>🔋</span></div>
+    </div>`;
+}
+
+function navBarHTML(title, showBack){
+  return `
+    <div class="navbar">
+      ${showBack ? '<button class="back" onclick="goBack()"><span>‹</span>戻る</button>' : ''}
+      <div class="title">${title}</div>
+    </div>`;
+}
+
+function progressHTML(){
+  const total = questions.length;
+  const cur = state.step;
+  let html = '<div class="progress-wrap"><div class="progress">';
+  for(let i=0;i<total;i++){
+    let cls = 'dot';
+    if(i < cur) cls += ' active';
+    else if(i === cur) cls += ' active current';
+    html += `<div class="${cls}"></div>`;
+  }
+  html += '</div></div>';
+  return html;
+}
+
+function renderStart(){
+  return `
+    ${statusBarHTML()}
+    ${navBarHTML('讃岐うどん診断', false)}
+    <div class="screen">
+      <div class="screen-content">
+        <div class="hero">
+          <div class="hero-wrap">
+            <div class="udon-hero">${udonIcon('kake', 200)}</div>
+            <div class="floating-bits">
+              <div class="bit b1">${chopsticksSVG()}</div>
+              <div class="bit b2">${tempuraSVG()}</div>
+              <div class="bit b3">${kamabokoSVG()}</div>
+            </div>
+          </div>
+          <h1>香川で出会う<br><span class="accent">運命の一杯</span></h1>
+          <div class="subtitle">6つの質問に答えるだけ。<br>あなたにぴったりの讃岐うどんの名店を、AIがレコメンドします。</div>
+          <div class="chips">
+            <div class="chip">🕐 所要1分</div>
+            <div class="chip">🏪 19店舗から選定</div>
+            <div class="chip">📍 Map対応</div>
+          </div>
+        </div>
+      </div>
+      <div class="cta-area">
+        <button class="btn" onclick="startQuestions()">診断スタート</button>
+      </div>
+    </div>
+  `;
+}
+
+function renderQuestion(){
+  const q = questions[state.step];
+  const a = state.answers[q.key];
+  const isLast = state.step === questions.length - 1;
+  let optionsHTML = '';
+  for(const opt of q.options){
+    const sel = a === opt.value ? ' selected' : '';
+    optionsHTML += `
+      <button class="option${sel}" onclick="selectOption('${q.key}','${opt.value}')">
+        <div class="icon">${opt.icon}</div>
+        <div class="content">
+          <div class="label">${opt.label}</div>
+          <div class="desc">${opt.desc}</div>
+        </div>
+        <div class="chev"></div>
+      </button>`;
+  }
+  const btnLabel = isLast ? '結果を見る' : '次へ';
+  const disabled = a ? '' : 'disabled';
+  return `
+    ${statusBarHTML()}
+    ${navBarHTML('うどん診断', true)}
+    ${progressHTML()}
+    <div class="screen">
+      <div class="screen-content">
+        <div class="question-header">
+          <div class="num">QUESTION ${state.step + 1} / ${questions.length}</div>
+          <h2>${q.title}</h2>
+        </div>
+        <div class="options">${optionsHTML}</div>
+      </div>
+      <div class="cta-area">
+        <button class="btn" ${disabled} onclick="nextStep()">${btnLabel}</button>
+      </div>
+    </div>
+  `;
+}
+
+function scoreStore(store, a){
+  let s = 0, matches = [];
+  // area: heavy weight
+  if(a.area){
+    if(store.area === a.area){ s += 6; matches.push('area'); }
+    else s -= 3;
+  }
+  if(a.noodle && a.noodle !== 'any' && store.noodle === a.noodle){ s += 3; matches.push('noodle'); }
+  if(a.dashi && a.dashi !== 'any'){
+    if(store.dashi === a.dashi){ s += 3; matches.push('dashi'); }
+    else if(store.dashi === 'any') s += 1;
+  }
+  if(a.style && a.style !== 'any' && store.style === a.style){ s += 3; matches.push('style'); }
+  if(a.menu && store.menu === a.menu){ s += 4; matches.push('menu'); }
+  if(a.queue){
+    if(a.queue === 'avoid'){
+      if(store.queue === 'quiet'){ s += 3; matches.push('queue'); }
+      else if(store.queue === 'normal') s += 1;
+      else s -= 3;
+    } else if(a.queue === 'normal'){
+      if(store.queue === 'normal'){ s += 2; matches.push('queue'); }
+      else if(store.queue === 'quiet') s += 1;
+    } else if(a.queue === 'ok'){
+      if(store.queue === 'crowded'){ s += 2; matches.push('queue'); }
+    }
+  }
+  return {score:s, matches};
+}
+
+function computeResults(){
+  const a = state.answers;
+  const scored = stores.map(st => {
+    const {score, matches} = scoreStore(st, a);
+    return {store:st, score, matches};
+  });
+  scored.sort((x,y) => {
+    if(y.score !== x.score) return y.score - x.score;
+    return Math.random() - 0.5;
+  });
+  return scored;
+}
+
+function mapURL(name){
+  return 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(name + ' 香川 うどん');
+}
+
+function renderResult(){
+  const results = computeResults();
+  const top = results[0];
+  const alts = results.slice(1, 4);
+  const maxScore = 22; // approximate max
+  const pct = Math.max(30, Math.min(99, Math.round(top.score / maxScore * 100)));
+
+  const s = top.store;
+  const matchSet = new Set(top.matches);
+  const tagsHTML = [
+    {key:'area',label:areaNames[s.area]},
+    {key:'style',label:styleNames[s.style]},
+    {key:'menu',label:'名物: ' + menuNames[s.menu]},
+    {key:'noodle',label:'麺: ' + noodleNames[s.noodle]},
+    {key:'dashi',label:'出汁: ' + dashiNames[s.dashi]},
+    {key:'queue',label:queueNames[s.queue]}
+  ].map(t => `<div class="tag${matchSet.has(t.key)?' match':''}">${t.label}</div>`).join('');
+
+  let altsHTML = '';
+  for(const a of alts){
+    altsHTML += `
+      <a class="alt-card" href="${mapURL(a.store.name)}" target="_blank" rel="noopener">
+        <div class="alt-emoji">${udonIcon(a.store.menu, 44)}</div>
+        <div class="alt-content">
+          <div class="alt-name">${a.store.name}</div>
+          <div class="alt-meta">${areaNames[a.store.area]} ・ ${menuNames[a.store.menu]} ・ ${styleNames[a.store.style]}</div>
+        </div>
+        <div class="alt-chev">›</div>
+      </a>`;
+  }
+
+  return `
+    ${statusBarHTML()}
+    ${navBarHTML('診断結果', true)}
+    <div class="screen">
+      <div class="screen-content">
+        <div class="result-label">
+          <div class="tag-top">あなたの運命の一杯</div>
+          <h2>この店で間違いなし！</h2>
+        </div>
+        <div class="store-card">
+          <div class="store-emoji">${udonIcon(s.menu, 150)}</div>
+          <div style="text-align:center">
+            <div class="area-badge">📍 ${areaNames[s.area]}</div>
+          </div>
+          <h3 style="text-align:center">${s.name}</h3>
+          <div class="match-score">
+            <div class="label">マッチ度</div>
+            <div class="bar"><div class="bar-fill" id="barFill" style="width:0%"></div></div>
+            <div class="pct">${pct}%</div>
+          </div>
+          <div class="desc">${s.desc}</div>
+          <div class="tags">${tagsHTML}</div>
+          <a class="map-link" href="${mapURL(s.name)}" target="_blank" rel="noopener">
+            <span>🗺️</span><span>Google マップで開く</span>
+          </a>
+        </div>
+        <div class="alt-section">
+          <h4>他のおすすめ候補</h4>
+          ${altsHTML}
+        </div>
+        <div class="restart-row">
+          <button class="btn ghost" onclick="shareResult('${s.name}')">シェア</button>
+          <button class="btn" onclick="restart()">もう一度診断</button>
+        </div>
+        <div class="footer-note">
+          ※ 営業時間・定休日は各店舗の公式情報をご確認ください。<br>行列店は時間に余裕を持ってお出かけを🙏
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function render(){
+  let html;
+  if(state.step === -1) html = renderStart();
+  else if(state.step >= questions.length) html = renderResult();
+  else html = renderQuestion();
+  app.innerHTML = html;
+  if(state.step >= questions.length){
+    requestAnimationFrame(() => {
+      const bar = document.getElementById('barFill');
+      if(bar){
+        const pctMatch = app.querySelector('.pct');
+        if(pctMatch) bar.style.width = pctMatch.textContent;
+      }
+    });
+  }
+}
+
+function startQuestions(){
+  state.step = 0;
+  state.direction = 'forward';
+  render();
+}
+
+function selectOption(key, value){
+  state.answers[key] = value;
+  render();
+}
+
+function nextStep(){
+  const q = questions[state.step];
+  if(!state.answers[q.key]) return;
+  state.step += 1;
+  state.direction = 'forward';
+  render();
+}
+
+function goBack(){
+  if(state.step > 0) state.step -= 1;
+  else if(state.step === 0) state.step = -1;
+  else if(state.step >= questions.length) state.step = questions.length - 1;
+  state.direction = 'back';
+  render();
+}
+
+function restart(){
+  state.step = -1;
+  state.answers = {};
+  render();
+}
+
+function shareResult(name){
+  const text = `讃岐うどん診断で「${name}」がおすすめされた🍜 #讃岐うどん診断`;
+  if(navigator.share){
+    navigator.share({title:'讃岐うどん診断',text:text}).catch(()=>{});
+  } else if(navigator.clipboard){
+    navigator.clipboard.writeText(text).then(()=>{
+      alert('結果をコピーしました！\n\n' + text);
+    });
+  } else {
+    alert(text);
+  }
+}
+
+render();
+// Update clock once per minute
+setInterval(() => {
+  const sb = document.querySelector('.statusbar > div:first-child');
+  if(sb) sb.textContent = now();
+}, 30000);
+</script>
+</body>
+</html>
